@@ -2,5 +2,5 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: solid gray;
+    border: solid gray 1px;
 }
