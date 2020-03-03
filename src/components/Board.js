@@ -6,11 +6,24 @@ export class Board extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            temp: "Test",
-            grid: this.createGrid(5)
+            grid: this.createGrid(5),
+            visible: this.createVisGrid(5),
+
         }
     }
     
+    createVisGrid = (size) => {
+        
+        // initialize matrix
+        let matrix = [];
+        for(let i=0; i < size; i++) {
+            matrix[i] = [];
+            for(let j=0; j < size; j++) {
+                matrix[i][j] = false;
+            }
+        }
+    }
+
     createGrid = (size) => {
         
         // initialize matrix
@@ -46,35 +59,37 @@ export class Board extends React.Component {
 
                 // count all bombs around cell
                 let count = 0;
-                for(let r=i-1; r<=i+1; r++) {
-                    if (r<0 || r>=size) {
+                for(let r=0; r<3; r++) {
+                    if (i-1+r < 0 || i-1+r >= size) {
                         continue;
                     }
                     
-                    for(let c=j-1; c<=j+1; j++) {
-                        if (c<0 || c>size) {
+                    for(let c=0; c<3; c++) {
+                        if (j-1+c < 0 || j-1+c >= size ) {
                             continue;
                         }
 
-                        if (matrix[r][c] === "💣") {
+                        if (matrix[i-1+r][j-1+c] === "💣") {
                             count++;
                         }
                     }
-
                 }
-                matrix[i][j] = count;
+                matrix[i][j] = count.toString();
             }
         }
 
-
         return matrix
     }
+
+    reveal = (i, j) => {
+        this.setState({grid: this.state.grid})
+    } 
 
     render() {
         
         
         const cellsFlat = [].concat(...this.state.grid);   
-        const cells = cellsFlat.map( item => <Cell number={item} /> )
+        const cells = cellsFlat.map( item => <Cell {...this.state} /> );
 
         return (
             <div className="Board">

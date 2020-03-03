@@ -10,9 +10,9 @@ export class Cell extends Component {
     
     render() {
         return (
-            <div className="Cell">
-                {this.props.number}
-            </div>
+            <button className="Cell">
+                {this.props.grid[0][0]}
+            </button>
         )
     }
 }
