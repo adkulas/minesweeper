@@ -85,21 +85,7 @@ export class Board extends React.Component {
         }
     }
 
-    handleClick = (row, col) => {
-        this.setState(state => {
-            const newGrid = this.state.grid.map((arr, i) =>
-                arr.map((cell, j) => ({ ...cell }))
-            )
-            this.reveal(newGrid, row, col, new Set())
-
-            return {
-                ...state,
-                grid: newGrid,
-            }
-        })
-    }
-
-    reveal = (grid, i, j, visited) => {
+    _reveal = (grid, i, j, visited) => {
         grid[i][j].visible = true
         visited.add([i, j].toString())
         if (grid[i][j].bombCount > 0 || grid[i][j].isBomb) {
@@ -119,20 +105,53 @@ export class Board extends React.Component {
                 }
 
                 if (
-                    !visited.has([i - 1 + r, j - 1 + c].toString()) ||
-                    grid[i - 1 + r][j - 1 + c].visible === false
+                    !visited.has([i - 1 + r, j - 1 + c].toString()) &&
+                    grid[i - 1 + r][j - 1 + c].visible === false &&
+                    grid[i - 1 + r][j - 1 + c].flagged === false
                 ) {
-                    this.reveal(grid, i - 1 + r, j - 1 + c, visited)
+                    this._reveal(grid, i - 1 + r, j - 1 + c, visited)
                 }
             }
         }
         return
     }
 
+    handleClick = (row, col) => {
+        this.setState(state => {
+            const newGrid = this.state.grid.map((arr, i) =>
+                arr.map((cell, j) => ({ ...cell }))
+            )
+            this._reveal(newGrid, row, col, new Set())
+
+            return {
+                ...state,
+                grid: newGrid,
+            }
+        })
+    }
+
+    handleRightClick = (row, col) => {
+        this.setState(state => {
+            const newGrid = this.state.grid.map((arr, i) =>
+                arr.map((cell, j) => ({ ...cell }))
+            )
+            newGrid[row][col].flagged = !newGrid[row][col].flagged
+            return {
+                ...state,
+                grid: newGrid,
+            }
+        })
+    }
+
     render() {
         const cellsFlat = [].concat(...this.state.grid)
         const cells = cellsFlat.map((item, i) => (
-            <Cell key={i} {...item} handleClick={this.handleClick} />
+            <Cell
+                key={i}
+                {...item}
+                handleClick={this.handleClick}
+                handleRightClick={this.handleRightClick}
+            />
         ))
 
         return (
