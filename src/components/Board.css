@@ -12,11 +12,10 @@
 
 .Grid {
     display: grid;
-    grid-template-columns: repeat(3, 50px);
-    grid-template-rows: repeat(3, 50px);
+    grid-template-columns: repeat(8, 50px);
+    grid-template-rows: repeat(8, 50px);
     grid-gap: 0px;
     border: solid gray;
     /* grid-auto-rows: minmax(100px, 101px); */
     /* grid-auto-columns: minmax(100px, 100px); */
-
 }
