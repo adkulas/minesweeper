@@ -6,13 +6,12 @@ export class Board extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            // grid: [],
-            grid: this._initializeGrid(5),
+            grid: this._initializeGrid(8),
         }
     }
 
     _initializeGrid = size => {
-        const bombLocations = this._initBombs(size, size, size)
+        const bombLocations = this._initBombs(5, size, size)
 
         // initialize grid
         let grid = []
@@ -24,7 +23,7 @@ export class Board extends React.Component {
                     isBomb: false,
                     row: i,
                     col: j,
-                    visible: true,
+                    visible: false,
                     flagged: false,
                     bombCount: 0,
                 }
@@ -81,26 +80,53 @@ export class Board extends React.Component {
                     }
                 }
                 matrix[i][j].bombCount = count
-                matrix[i][j].val = count.toString()
+                matrix[i][j].val = count ? count.toString() : ''
             }
         }
     }
 
     handleClick = (row, col) => {
-        // alert('Hello')
-        console.log(row, col)
-        this.setState({
-            grid: this.state.grid.map((row, i) =>
-                row.map((cell, j) => {
-                    const result = { ...cell }
-                    if (row === i && col === j) {
-                        result.visible = false
-                    }
-                    console.log(i, j)
-                    return result
-                })
-            ),
+        this.setState(state => {
+            const newGrid = this.state.grid.map((arr, i) =>
+                arr.map((cell, j) => ({ ...cell }))
+            )
+            this.reveal(newGrid, row, col, new Set())
+
+            return {
+                ...state,
+                grid: newGrid,
+            }
         })
+    }
+
+    reveal = (grid, i, j, visited) => {
+        grid[i][j].visible = true
+        visited.add([i, j].toString())
+        if (grid[i][j].bombCount > 0 || grid[i][j].isBomb) {
+            return
+        }
+
+        const height = grid.length
+        const width = grid[0].length
+        for (let r = 0; r < 3; r++) {
+            if (i - 1 + r < 0 || i - 1 + r >= height) {
+                continue
+            }
+
+            for (let c = 0; c < 3; c++) {
+                if (j - 1 + c < 0 || j - 1 + c >= width) {
+                    continue
+                }
+
+                if (
+                    !visited.has([i - 1 + r, j - 1 + c].toString()) ||
+                    grid[i - 1 + r][j - 1 + c].visible === false
+                ) {
+                    this.reveal(grid, i - 1 + r, j - 1 + c, visited)
+                }
+            }
+        }
+        return
     }
 
     render() {
@@ -116,7 +142,7 @@ export class Board extends React.Component {
                                         <Grid />
                                          */}
                 {/* <Cell /> */}
-                <div className="Grid"> {cells} </div>{' '}
+                <div className="Grid"> {cells} </div>
             </div>
         )
     }
