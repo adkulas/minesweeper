@@ -12,6 +12,7 @@ export class Board extends React.Component {
                 bombs: 10,
                 size: { rows: 10, cols: 10 },
             }),
+            gameStarted: false,
             gameOver: false,
             win: false,
             flagCount: 0,
@@ -24,6 +25,29 @@ export class Board extends React.Component {
     }
 
     _initializeGrid = difficulty => {
+        // initialize grid
+        let grid = []
+        const rows = difficulty.size.rows
+        const cols = difficulty.size.cols
+        for (let i = 0; i < rows; i++) {
+            grid[i] = []
+            for (let j = 0; j < cols; j++) {
+                grid[i][j] = {
+                    val: '',
+                    isBomb: false,
+                    row: i,
+                    col: j,
+                    visible: false,
+                    flagged: false,
+                    bombCount: 0,
+                    exploded: false,
+                }
+            }
+        }
+        return grid
+    }
+
+    _initializeGridOLD = difficulty => {
         const bombLocations = this._initBombs(
             difficulty.bombs,
             difficulty.size.rows,
@@ -58,22 +82,26 @@ export class Board extends React.Component {
         return grid
     }
 
-    _initBombs = (numMines, numRows, numCols) => {
+    _initBombs = (firstClick, difficulty) => {
         // place mines
         const bombLocations = new Set()
-        while (bombLocations.size < numMines) {
-            let r = Math.floor(Math.random() * numRows)
-            let c = Math.floor(Math.random() * numCols)
+        const result = []
+        bombLocations.add([firstClick.row, firstClick.col].toString())
+
+        while (bombLocations.size - 1 < difficulty.bombCount) {
+            let r = Math.floor(Math.random() * difficulty.size.rows)
+            let c = Math.floor(Math.random() * difficulty.size.cols)
 
             if (!bombLocations.has([r, c].toString())) {
                 bombLocations.add([r, c].toString())
+                result.push([r, c])
             }
         }
 
-        return bombLocations
+        return result
     }
 
-    _initCounts = matrix => {
+    _initCountsOLD = matrix => {
         // loops through cells, at each cell count number of bombs around
         for (let i = 0; i < matrix.length; i++) {
             for (let j = 0; j < matrix[i].length; j++) {
@@ -102,6 +130,15 @@ export class Board extends React.Component {
                 matrix[i][j].val = count ? count.toString() : ''
             }
         }
+    }
+
+    _initCounts = (grid, bombLocations) => {
+        const updatedGrid = grid.map(row => row.map(cell => ({ ...cell })))
+
+        for (let loc of bombLocations) {
+        }
+
+        return updatedGrid
     }
 
     _reveal = (grid, i, j, visited) => {
@@ -178,9 +215,26 @@ export class Board extends React.Component {
         )
     }
 
+    startGame = (row, col) => {
+        // set state for new grid where clicked spot must not be a bomb
+
+        this.setState(state => {
+            const bombLocations = this._initBombs(
+                { row: row, col: col },
+                state.difficulty
+            )
+        })
+    }
+
     handleClick = (row, col) => {
         if (this.state.gameOver) {
             return
+        }
+
+        if (!this.state.gameStarted) {
+            this.startGame(row, col)
+            // add bombs
+            // add counts
         }
 
         this.setState(state => {
