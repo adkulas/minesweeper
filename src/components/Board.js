@@ -7,6 +7,8 @@ export class Board extends React.Component {
         super(props)
         this.state = {
             grid: this._initializeGrid(8),
+            gameOver: false,
+            flagCount: 0,
         }
     }
 
@@ -26,6 +28,7 @@ export class Board extends React.Component {
                     visible: false,
                     flagged: false,
                     bombCount: 0,
+                    exploded: false,
                 }
 
                 if (bombLocations.has([i, j].toString())) {
@@ -116,16 +119,40 @@ export class Board extends React.Component {
         return
     }
 
+    _gameOver = grid => {
+        grid.forEach(row =>
+            row.forEach(cell => {
+                if (cell.isBomb) {
+                    cell.visible = true
+                }
+                return
+            })
+        )
+    }
+
     handleClick = (row, col) => {
+        if (this.state.gameOver) {
+            return
+        }
+
         this.setState(state => {
             const newGrid = this.state.grid.map((arr, i) =>
                 arr.map((cell, j) => ({ ...cell }))
             )
-            this._reveal(newGrid, row, col, new Set())
+
+            let gameOver = false
+            if (newGrid[row][col].isBomb) {
+                newGrid[row][col].exploded = true
+                this._gameOver(newGrid)
+                gameOver = true
+            } else {
+                this._reveal(newGrid, row, col, new Set())
+            }
 
             return {
                 ...state,
                 grid: newGrid,
+                gameOver: gameOver,
             }
         })
     }
@@ -139,6 +166,8 @@ export class Board extends React.Component {
             return {
                 ...state,
                 grid: newGrid,
+                flagCount:
+                    state.flagCount + (newGrid[row][col].flagged ? 1 : -1),
             }
         })
     }
@@ -161,6 +190,19 @@ export class Board extends React.Component {
                                         <Grid />
                                          */}
                 {/* <Cell /> */}
+                <div>
+                    <ul>
+                        <li>
+                            <button>Restart</button>
+                        </li>
+                        <li>
+                            <span>{8 - this.state.flagCount}'🚩️'</span>
+                        </li>
+                        <li>
+                            <span>Timer</span>
+                        </li>
+                    </ul>
+                </div>
                 <div className="Grid"> {cells} </div>
             </div>
         )

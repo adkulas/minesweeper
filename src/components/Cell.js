@@ -21,6 +21,8 @@ export class Cell extends Component {
 
     render() {
         const style = this.props.visible ? { backgroundColor: 'lightgray' } : {}
+        if (this.props.exploded) style.backgroundColor = 'red'
+
         return (
             <button
                 className="Cell"
