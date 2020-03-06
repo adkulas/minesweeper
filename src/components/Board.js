@@ -1,25 +1,42 @@
 import React from 'react'
 import './Board.css'
 import Cell from './Cell'
+import ControlMenu from './ControlMenu'
 
 export class Board extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            grid: this._initializeGrid(8),
+            grid: this._initializeGrid({
+                mode: 'Easy',
+                bombs: 10,
+                size: { rows: 10, cols: 10 },
+            }),
             gameOver: false,
+            win: false,
             flagCount: 0,
+            difficulty: {
+                mode: 'Easy',
+                bombs: 10,
+                size: { rows: 10, cols: 10 },
+            },
         }
     }
 
-    _initializeGrid = size => {
-        const bombLocations = this._initBombs(5, size, size)
+    _initializeGrid = difficulty => {
+        const bombLocations = this._initBombs(
+            difficulty.bombs,
+            difficulty.size.rows,
+            difficulty.size.cols
+        )
 
         // initialize grid
         let grid = []
-        for (let i = 0; i < size; i++) {
+        const rows = difficulty.size.rows
+        const cols = difficulty.size.cols
+        for (let i = 0; i < rows; i++) {
             grid[i] = []
-            for (let j = 0; j < size; j++) {
+            for (let j = 0; j < cols; j++) {
                 grid[i][j] = {
                     val: '',
                     isBomb: false,
@@ -58,9 +75,8 @@ export class Board extends React.Component {
 
     _initCounts = matrix => {
         // loops through cells, at each cell count number of bombs around
-        let size = matrix.length
         for (let i = 0; i < matrix.length; i++) {
-            for (let j = 0; j < matrix.length; j++) {
+            for (let j = 0; j < matrix[i].length; j++) {
                 if (matrix[i][j].isBomb) {
                     continue
                 }
@@ -68,12 +84,12 @@ export class Board extends React.Component {
                 // count all bombs around cell
                 let count = 0
                 for (let r = 0; r < 3; r++) {
-                    if (i - 1 + r < 0 || i - 1 + r >= size) {
+                    if (i - 1 + r < 0 || i - 1 + r >= matrix.length) {
                         continue
                     }
 
                     for (let c = 0; c < 3; c++) {
-                        if (j - 1 + c < 0 || j - 1 + c >= size) {
+                        if (j - 1 + c < 0 || j - 1 + c >= matrix[i].length) {
                             continue
                         }
 
@@ -91,7 +107,9 @@ export class Board extends React.Component {
     _reveal = (grid, i, j, visited) => {
         grid[i][j].visible = true
         visited.add([i, j].toString())
-        if (grid[i][j].bombCount > 0 || grid[i][j].isBomb) {
+        if (grid[i][j].bombCount > 0) return
+        if (grid[i][j].isBomb) {
+            grid[i][j].exploded = true
             return
         }
 
@@ -119,11 +137,41 @@ export class Board extends React.Component {
         return
     }
 
-    _gameOver = grid => {
+    _checkGameStatus = (grid, difficulty) => {
+        let visibleCells = 0
+
+        for (let row of grid) {
+            for (let cell of row) {
+                if (cell.exploded) return { gameOver: true, win: false }
+
+                if (cell.visible) visibleCells++
+            }
+        }
+
+        let totalFreeCells =
+            difficulty.size.rows * difficulty.size.cols - difficulty.bombs
+        if (visibleCells === totalFreeCells)
+            return { gameOver: true, win: false }
+
+        return { gameOver: false, win: false }
+    }
+
+    _revealBombs = grid => {
         grid.forEach(row =>
             row.forEach(cell => {
                 if (cell.isBomb) {
                     cell.visible = true
+                }
+                return
+            })
+        )
+    }
+
+    _flagBombs = grid => {
+        grid.forEach(row =>
+            row.forEach(cell => {
+                if (cell.isBomb) {
+                    cell.flagged = true
                 }
                 return
             })
@@ -140,34 +188,62 @@ export class Board extends React.Component {
                 arr.map((cell, j) => ({ ...cell }))
             )
 
-            let gameOver = false
-            if (newGrid[row][col].isBomb) {
-                newGrid[row][col].exploded = true
-                this._gameOver(newGrid)
-                gameOver = true
-            } else {
-                this._reveal(newGrid, row, col, new Set())
+            this._reveal(newGrid, row, col, new Set())
+            let gameStatus = this._checkGameStatus(newGrid, state.difficulty)
+
+            if (gameStatus.gameOver) {
+                gameStatus.win
+                    ? this._flagBombs(newGrid)
+                    : this._revealBombs(newGrid)
             }
 
             return {
                 ...state,
                 grid: newGrid,
-                gameOver: gameOver,
+                gameOver: gameStatus.gameOver,
+                win: gameStatus.win,
             }
         })
     }
 
     handleRightClick = (row, col) => {
+        if (this.state.gameOver) {
+            return
+        }
         this.setState(state => {
             const newGrid = this.state.grid.map((arr, i) =>
                 arr.map((cell, j) => ({ ...cell }))
             )
-            newGrid[row][col].flagged = !newGrid[row][col].flagged
+            let flagVal = 0
+
+            // no flag on cell and flags are available
+            if (
+                !newGrid[row][col].flagged &&
+                state.flagCount < state.difficulty.bombs
+            ) {
+                newGrid[row][col].flagged = !newGrid[row][col].flagged
+                flagVal = 1
+            }
+
+            // no flag on cell but no flags available
+            else if (
+                !newGrid[row][col].flagged &&
+                state.flagCount >= state.difficulty.bombs
+            ) {
+                // do nothing
+            }
+
+            // remove a flag
+            else {
+                newGrid[row][col].flagged = !newGrid[row][col].flagged
+                flagVal = -1
+            }
+
+            console.log(state.flagCount, flagVal)
             return {
                 ...state,
                 grid: newGrid,
-                flagCount:
-                    state.flagCount + (newGrid[row][col].flagged ? 1 : -1),
+                flagCount: state.flagCount + flagVal,
             }
         })
     }
@@ -183,27 +259,20 @@ export class Board extends React.Component {
             />
         ))
 
+        const style = {
+            gridTemplateRows: `repeat(${this.state.difficulty.size.rows}, 50px)`,
+            gridTemplateColumns: `repeat(${this.state.difficulty.size.cols}, 50px)`,
+        }
+
         return (
-            <div className="Board">
-                {/* 
-                                        <Controls />
-                                        <Grid />
-                                         */}
-                {/* <Cell /> */}
-                <div>
-                    <ul>
-                        <li>
-                            <button>Restart</button>
-                        </li>
-                        <li>
-                            <span>{8 - this.state.flagCount}'🚩️'</span>
-                        </li>
-                        <li>
-                            <span>Timer</span>
-                        </li>
-                    </ul>
+            <div>
+                <div className="Board">
+                    <ControlMenu />
+                    <div className="Grid" style={style}>
+                        {' '}
+                        {cells}{' '}
+                    </div>
                 </div>
-                <div className="Grid"> {cells} </div>
             </div>
         )
     }

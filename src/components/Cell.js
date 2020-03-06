@@ -7,7 +7,7 @@ export class Cell extends Component {
     }
 
     _handleClick = event => {
-        if (!this.props.flagged) {
+        if (!this.props.flagged && !this.props.visible) {
             this.props.handleClick(this.props.row, this.props.col)
         }
         return
@@ -15,7 +15,9 @@ export class Cell extends Component {
 
     _handleRightClick = event => {
         event.preventDefault()
-        this.props.handleRightClick(this.props.row, this.props.col)
+        if (!this.props.visible) {
+            this.props.handleRightClick(this.props.row, this.props.col)
+        }
         return
     }
 

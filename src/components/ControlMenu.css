@@ -1,0 +1,11 @@
+.Container {
+    display: flex;
+    width: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    list-style-type: none;
+    margin: 1rem 1rem 1rem 1rem;
+    /* border: none */
+    /* background-color: darkgray; */
+}
