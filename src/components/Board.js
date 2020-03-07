@@ -86,9 +86,16 @@ export class Board extends React.Component {
         // place mines
         const bombLocations = new Set()
         const result = []
-        bombLocations.add([firstClick.row, firstClick.col].toString())
 
-        while (bombLocations.size - 1 < difficulty.bombCount) {
+        // block off square around first click
+        for (let i = firstClick.row - 1; i <= firstClick.row + 1; i++) {
+            for (let j = firstClick.col - 1; j <= firstClick.col + 1; j++) {
+                bombLocations.add([i, j].toString())
+            }
+        }
+        // bombLocations.add([firstClick.row, firstClick.col].toString())
+
+        while (bombLocations.size - 9 < difficulty.bombs) {
             let r = Math.floor(Math.random() * difficulty.size.rows)
             let c = Math.floor(Math.random() * difficulty.size.cols)
 
@@ -136,6 +143,28 @@ export class Board extends React.Component {
         const updatedGrid = grid.map(row => row.map(cell => ({ ...cell })))
 
         for (let loc of bombLocations) {
+            let i = loc[0]
+            let j = loc[1]
+
+            grid[i][j].isBomb = true
+            grid[i][j].val = '💣'
+
+            // add count around each bomb
+            for (let r = 0; r < 3; r++) {
+                if (i - 1 + r < 0 || i - 1 + r >= grid.length) {
+                    continue
+                }
+
+                for (let c = 0; c < 3; c++) {
+                    if (j - 1 + c < 0 || j - 1 + c >= grid[i].length) continue
+                    if (grid[i - 1 + r][j - 1 + c].isBomb) continue
+
+                    grid[i - 1 + r][j - 1 + c].bombCount++
+                    grid[i - 1 + r][j - 1 + c].val = grid[i - 1 + r][
+                        j - 1 + c
+                    ].bombCount.toString()
+                }
+            }
         }
 
         return updatedGrid
@@ -223,6 +252,8 @@ export class Board extends React.Component {
                 { row: row, col: col },
                 state.difficulty
             )
+            const newGrid = this._initCounts(state.grid, bombLocations)
+            return { ...state, gameStarted: true, grid: newGrid }
         })
     }
 
@@ -233,8 +264,6 @@ export class Board extends React.Component {
 
         if (!this.state.gameStarted) {
             this.startGame(row, col)
-            // add bombs
-            // add counts
         }
 
         this.setState(state => {
