@@ -147,6 +147,7 @@ export class Board extends React.Component {
             let j = loc[1]
 
             grid[i][j].isBomb = true
+            grid[i][j].bombCount = 0
             grid[i][j].val = '💣'
 
             // add count around each bomb
@@ -156,9 +157,12 @@ export class Board extends React.Component {
                 }
 
                 for (let c = 0; c < 3; c++) {
-                    if (j - 1 + c < 0 || j - 1 + c >= grid[i].length) continue
-                    if (grid[i - 1 + r][j - 1 + c].isBomb) continue
-
+                    if (j - 1 + c < 0 || j - 1 + c >= grid[i].length) {
+                        continue
+                    }
+                    if (grid[i - 1 + r][j - 1 + c].isBomb) {
+                        continue
+                    }
                     grid[i - 1 + r][j - 1 + c].bombCount++
                     grid[i - 1 + r][j - 1 + c].val = grid[i - 1 + r][
                         j - 1 + c
@@ -173,11 +177,10 @@ export class Board extends React.Component {
     _reveal = (grid, i, j, visited) => {
         grid[i][j].visible = true
         visited.add([i, j].toString())
-        if (grid[i][j].bombCount > 0) return
         if (grid[i][j].isBomb) {
             grid[i][j].exploded = true
             return
-        }
+        } else if (grid[i][j].bombCount > 0) return
 
         const height = grid.length
         const width = grid[0].length
