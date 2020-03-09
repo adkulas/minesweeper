@@ -1,7 +1,23 @@
-.Cell {
+.Cell-container {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: solid gray 1px;
+    /* border: solid gray 1px; */
     background-color: darkgray;
+    width: 100%;
+    padding-top: 100%;
+    position: relative;
+}
+
+.text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    color: black;
+    border: solid gray 1px;
 }

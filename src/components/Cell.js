@@ -22,18 +22,20 @@ export class Cell extends Component {
         if (this.props.exploded) style.backgroundColor = 'red'
 
         return (
-            <button
-                className="Cell"
-                onClick={this._handleClick}
-                onContextMenu={this._handleRightClick}
-                style={style}
-            >
-                {this.props.visible
-                    ? this.props.val
-                    : this.props.flagged
-                    ? '🚩️'
-                    : ''}
-            </button>
+            <div className="Cell-container">
+                <div
+                    className="text"
+                    onClick={this._handleClick}
+                    onContextMenu={this._handleRightClick}
+                    style={style}
+                >
+                    {this.props.visible
+                        ? this.props.val
+                        : this.props.flagged
+                        ? '🚩️'
+                        : ''}
+                </div>
+            </div>
         )
     }
 }

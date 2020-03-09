@@ -12,25 +12,41 @@ export class ControlMenu extends Component {
         return (
             <ul className="Container">
                 <li>
-                    <button value="Easy" onClick={this._handleMode}>
+                    <button
+                        className="button"
+                        value="Easy"
+                        onClick={this._handleMode}
+                    >
                         Easy
                     </button>
 
-                    <button value="Medium" onClick={this._handleMode}>
+                    <button
+                        className="button"
+                        value="Medium"
+                        onClick={this._handleMode}
+                    >
                         Medium
                     </button>
-                    <button value="Hard" onClick={this._handleMode}>
+                    <button
+                        className="button"
+                        value="Hard"
+                        onClick={this._handleMode}
+                    >
                         Hard
                     </button>
                 </li>
                 <li>
-                    <span>
-                        '🚩️' {this.props.bombCount - this.props.flagCount}
-                    </span>
-                    <span>Timer</span>
+                    <div className="Container middle">
+                        <span>
+                            '🚩️' {this.props.bombCount - this.props.flagCount}
+                        </span>
+                        <span>Timer</span>
+                    </div>
                 </li>
                 <li>
-                    <button onClick={this.props.handleReset}>Reset</button>
+                    <button className="button" onClick={this.props.handleReset}>
+                        Reset
+                    </button>
                 </li>
             </ul>
         )

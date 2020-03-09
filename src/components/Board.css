@@ -10,10 +10,13 @@
     color: white;
 }
 
-.Grid {
+.Grid-container {
     display: grid;
-    grid-template-columns: repeat(10, 50px);
-    grid-template-rows: repeat(10, 50px);
+    /* height: 50%; */
+    width: 80%;
+    /* max-width: 1000px; */
+    grid-template-columns: repeat(10, minmax(30px, 100px));
+    grid-template-rows: repeat(10, minmax(30px, 100px));
     grid-gap: 0px;
     border: solid gray;
     /* grid-auto-rows: minmax(100px, 101px); */

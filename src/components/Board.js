@@ -332,8 +332,9 @@ export class Board extends React.Component {
         console.log(cells.length)
 
         const style = {
-            gridTemplateRows: `repeat(${this.state.difficulty.size.rows}, 50px)`,
-            gridTemplateColumns: `repeat(${this.state.difficulty.size.cols}, 50px)`,
+            gridTemplateRows: `repeat(${this.state.difficulty.size.rows}, minmax(30px, 1fr))`,
+            gridTemplateColumns: `repeat(${this.state.difficulty.size.cols}, minmax(30px, 1fr))`,
+            maxWidth: `${this.state.difficulty.size.cols * 80}px`,
         }
 
         return (
@@ -345,7 +346,7 @@ export class Board extends React.Component {
                         flagCount={this.state.flagCount}
                         bombCount={this.state.difficulty.bombs}
                     />
-                    <div className="Grid" style={style}>
+                    <div className="Grid-container" style={style}>
                         {' '}
                         {cells}{' '}
                     </div>
