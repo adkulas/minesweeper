@@ -2,10 +2,6 @@ import React, { Component } from 'react'
 import './Cell.css'
 
 export class Cell extends Component {
-    constructor(props) {
-        super(props)
-    }
-
     _handleClick = event => {
         if (!this.props.flagged && !this.props.visible) {
             this.props.handleClick(this.props.row, this.props.col)

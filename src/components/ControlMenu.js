@@ -1,23 +1,40 @@
-import React, { PureComponent } from 'react'
+import React, { Component } from 'react'
 import './ControlMenu.css'
 
-export default class ControlMenu extends PureComponent {
+export class ControlMenu extends Component {
+    _handleMode = event => {
+        this.props.handleDifficultyChange(event.target.value)
+        this.props.handleReset()
+        return
+    }
+
     render() {
         return (
             <ul className="Container">
                 <li>
-                    <button>Easy</button>
-                    <button>Medium</button>
-                    <button>Hard</button>
+                    <button value="Easy" onClick={this._handleMode}>
+                        Easy
+                    </button>
+
+                    <button value="Medium" onClick={this._handleMode}>
+                        Medium
+                    </button>
+                    <button value="Hard" onClick={this._handleMode}>
+                        Hard
+                    </button>
                 </li>
                 <li>
-                    <span>Flags</span>
+                    <span>
+                        '🚩️' {this.props.bombCount - this.props.flagCount}
+                    </span>
                     <span>Timer</span>
                 </li>
                 <li>
-                    <button>Reset</button>
+                    <button onClick={this.props.handleReset}>Reset</button>
                 </li>
             </ul>
         )
     }
 }
+
+export default ControlMenu
