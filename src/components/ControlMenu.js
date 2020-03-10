@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import './ControlMenu.css'
+import Timer from './Timer'
 
 export class ControlMenu extends Component {
     _handleMode = event => {
@@ -40,7 +41,9 @@ export class ControlMenu extends Component {
                         <span>
                             '🚩️' {this.props.bombCount - this.props.flagCount}
                         </span>
-                        <span>Timer</span>
+                        <span>
+                            <Timer />
+                        </span>
                     </div>
                 </li>
                 <li>
