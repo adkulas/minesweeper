@@ -345,6 +345,7 @@ export class Board extends React.Component {
                         handleDifficultyChange={this.handleDifficultyChange}
                         flagCount={this.state.flagCount}
                         bombCount={this.state.difficulty.bombs}
+                        gameStarted={this.state.gameStarted}
                     />
                     <div className="Grid-container" style={style}>
                         {' '}

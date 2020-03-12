@@ -18,35 +18,38 @@ export class Cell extends Component {
     }
 
     render() {
-        const style = this.props.visible ? { backgroundColor: 'lightgray' } : {}
+        let color = 'black'
         switch (this.props.bombCount) {
             case 1:
-                style.color = 'blue'
+                color = 'blue'
                 break
             case 2:
-                style.color = 'green'
+                color = 'green'
                 break
             case 3:
-                style.color = 'red'
+                color = 'red'
                 break
             case 4:
-                style.color = 'darkblue'
+                color = 'darkblue'
                 break
             case 5:
-                style.color = 'maroon'
+                color = 'maroon'
                 break
             case 6:
-                style.color = 'teal'
+                color = 'teal'
                 break
             case 7:
-                style.color = 'navy'
+                color = 'navy'
                 break
             case 8:
-                style.color = 'gray'
+                color = 'gray'
                 break
             default:
-                style.color = 'black'
+                color = 'black'
         }
+        const style = this.props.visible
+            ? { backgroundColor: 'lightgray', color: color }
+            : {}
 
         if (this.props.exploded) style.backgroundColor = 'red'
 

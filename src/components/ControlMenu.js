@@ -42,7 +42,7 @@ export class ControlMenu extends Component {
                             '🚩️' {this.props.bombCount - this.props.flagCount}
                         </span>
                         <span>
-                            <Timer />
+                            <Timer gameStarted={this.props.gameStarted} />
                         </span>
                     </div>
                 </li>

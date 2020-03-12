@@ -5,14 +5,12 @@ export class Timer extends Component {
         super(props)
         this.state = {
             time: new Date(),
+            seconds: 0,
         }
     }
 
     componentDidMount() {
-        this.timerId = setInterval(
-            this.setState(() => this.tick()),
-            1000
-        )
+        this.timerId = setInterval(this.tick, 1000)
     }
 
     componentWillUnmount() {
@@ -20,13 +18,23 @@ export class Timer extends Component {
     }
 
     tick = () => {
-        this.setState({
-            time: new Date(),
+        this.setState(state => {
+            if (this.props.gameStarted) {
+                return {
+                    time: new Date(),
+                    seconds: state.seconds + 1,
+                }
+            } else {
+                return {
+                    time: new Date(),
+                    seconds: 0,
+                }
+            }
         })
     }
 
     render() {
-        return <div>{this.state.time.toLocaleTimeString}</div>
+        return <div>{this.state.seconds}</div>
     }
 }
 
