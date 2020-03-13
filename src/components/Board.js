@@ -292,7 +292,7 @@ export class Board extends React.Component {
 
             case 'Medium':
                 difficulty = {
-                    mode: 'Easy',
+                    mode: 'Medium',
                     bombs: 40,
                     size: { rows: 16, cols: 16 },
                 }
