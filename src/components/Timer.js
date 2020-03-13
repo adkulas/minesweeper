@@ -4,7 +4,6 @@ export class Timer extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            time: new Date(),
             seconds: 0,
         }
     }
@@ -19,14 +18,14 @@ export class Timer extends Component {
 
     tick = () => {
         this.setState(state => {
-            if (this.props.gameStarted) {
+            if (this.props.gameStarted && !this.props.gameOver) {
                 return {
-                    time: new Date(),
                     seconds: state.seconds + 1,
                 }
+            } else if (this.props.gameOver) {
+                return
             } else {
                 return {
-                    time: new Date(),
                     seconds: 0,
                 }
             }

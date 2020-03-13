@@ -154,7 +154,7 @@ export class Board extends React.Component {
         let totalFreeCells =
             difficulty.size.rows * difficulty.size.cols - difficulty.bombs
         if (visibleCells === totalFreeCells)
-            return { gameOver: true, win: false }
+            return { gameOver: true, win: true }
 
         return { gameOver: false, win: false }
     }
@@ -346,6 +346,7 @@ export class Board extends React.Component {
                         flagCount={this.state.flagCount}
                         bombCount={this.state.difficulty.bombs}
                         gameStarted={this.state.gameStarted}
+                        gameOver={this.state.gameOver}
                     />
                     <div className="Grid-container" style={style}>
                         {' '}
