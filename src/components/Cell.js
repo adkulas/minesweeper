@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import './Cell.css'
+import FlagIcon from '@material-ui/icons/Flag'
 
 export class Cell extends Component {
     _handleClick = event => {
@@ -61,11 +62,16 @@ export class Cell extends Component {
                     onContextMenu={this._handleRightClick}
                     style={style}
                 >
-                    {this.props.visible
-                        ? this.props.val
-                        : this.props.flagged
-                        ? '🚩️'
-                        : ''}
+                    {this.props.visible ? (
+                        this.props.val
+                    ) : this.props.flagged ? (
+                        <FlagIcon
+                            color="secondary"
+                            style={{ fontSize: '2.5rem' }}
+                        />
+                    ) : (
+                        ''
+                    )}
                 </div>
             </div>
         )
