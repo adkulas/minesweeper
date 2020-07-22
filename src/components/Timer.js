@@ -17,12 +17,12 @@ export class Timer extends Component {
     }
 
     tick = () => {
-        this.setState(state => {
-            if (this.props.gameStarted && !this.props.gameOver) {
+        this.setState((state, props) => {
+            if (props.gameStarted && !props.gameOver) {
                 return {
                     seconds: state.seconds + 1,
                 }
-            } else if (this.props.gameOver) {
+            } else if (props.gameOver) {
                 return
             } else {
                 return {

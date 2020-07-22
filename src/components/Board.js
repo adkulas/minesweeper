@@ -24,7 +24,7 @@ export class Board extends React.Component {
         }
     }
 
-    _initializeGrid = difficulty => {
+    _initializeGrid = (difficulty) => {
         // initialize grid
         let grid = []
         const rows = difficulty.size.rows
@@ -73,8 +73,8 @@ export class Board extends React.Component {
         return result
     }
 
-    _initCounts = (grid, bombLocations) => {
-        const updatedGrid = grid.map(row => row.map(cell => ({ ...cell })))
+    _initCounts = (inGrid, bombLocations) => {
+        const grid = inGrid.map((row) => row.map((cell) => ({ ...cell })))
 
         for (let loc of bombLocations) {
             let i = loc[0]
@@ -105,7 +105,7 @@ export class Board extends React.Component {
             }
         }
 
-        return updatedGrid
+        return grid
     }
 
     _reveal = (grid, i, j, visited) => {
@@ -159,9 +159,9 @@ export class Board extends React.Component {
         return { gameOver: false, win: false }
     }
 
-    _revealBombs = grid => {
-        grid.forEach(row =>
-            row.forEach(cell => {
+    _revealBombs = (grid) => {
+        grid.forEach((row) =>
+            row.forEach((cell) => {
                 if (cell.isBomb) {
                     cell.visible = true
                 }
@@ -170,9 +170,9 @@ export class Board extends React.Component {
         )
     }
 
-    _flagBombs = grid => {
-        grid.forEach(row =>
-            row.forEach(cell => {
+    _flagBombs = (grid) => {
+        grid.forEach((row) =>
+            row.forEach((cell) => {
                 if (cell.isBomb) {
                     cell.flagged = true
                 }
@@ -184,7 +184,7 @@ export class Board extends React.Component {
     startGame = (row, col) => {
         // set state for new grid where clicked spot must not be a bomb
 
-        this.setState(state => {
+        this.setState((state) => {
             const bombLocations = this._initBombs(
                 { row: row, col: col },
                 state.difficulty
@@ -203,8 +203,8 @@ export class Board extends React.Component {
             this.startGame(row, col)
         }
 
-        this.setState(state => {
-            const newGrid = this.state.grid.map((arr, i) =>
+        this.setState((state) => {
+            const newGrid = state.grid.map((arr, i) =>
                 arr.map((cell, j) => ({ ...cell }))
             )
 
@@ -230,8 +230,8 @@ export class Board extends React.Component {
         if (this.state.gameOver) {
             return
         }
-        this.setState(state => {
-            const newGrid = this.state.grid.map((arr, i) =>
+        this.setState((state) => {
+            const newGrid = state.grid.map((arr, i) =>
                 arr.map((cell, j) => ({ ...cell }))
             )
             let flagVal = 0
@@ -269,7 +269,7 @@ export class Board extends React.Component {
     }
 
     handleReset = () => {
-        this.setState(state => ({
+        this.setState((state) => ({
             ...state,
             grid: this._initializeGrid(state.difficulty),
             gameStarted: false,
@@ -279,7 +279,7 @@ export class Board extends React.Component {
         }))
     }
 
-    handleDifficultyChange = mode => {
+    handleDifficultyChange = (mode) => {
         let difficulty = {}
         switch (mode) {
             case 'Easy':
@@ -314,7 +314,7 @@ export class Board extends React.Component {
                 }
         }
 
-        this.setState(state => {
+        this.setState((state) => {
             return { ...state, difficulty: difficulty }
         })
     }
